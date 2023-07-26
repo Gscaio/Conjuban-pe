@@ -1,0 +1,95 @@
+@vagas--
+
+
+
+<?php
+include_once "conexao.php";
+date_default_timezone_set('America/Sao_Paulo');
+session_start();
+$email = $_SESSION['email'];
+//$senha_log = $_SESSION['password'];
+$sql = mysqli_query($conn, "select * from usuarios WHERE email ='$email'");
+while($line =mysqli_fetch_array($sql)){
+
+$senha = $line['senha'];
+$nivel = $line['nivel'];
+$id = $line['id'];
+$link = '-';
+
+}
+
+if($nivel==2){
+
+    $titulo = $_POST['Titulo'];
+    $foto = $_FILES['Imagem']['name'];
+    $tipo = $_FILES['Imagem']['type'];
+    $conteudo = $_POST['Conteudo'];
+    $autor = $_POST['Autor'];
+
+$registro = false;
+
+if($titulo !="" && $foto !="" && $conteudo !="" && $autor !="")
+$registro = true;
+
+
+}else{echo"Preencha todos os campos corretamente!";}
+
+
+$sql2 =mysqli_query($conn, "SELECT * FROM tb_postagens order by id_post desc limit 1");
+
+while($line =mysqli_fetch_array($sql2)){
+@$idpost = $line['id_post'];
+
+
+}
+
+//@$idpost = $idpost + 1;
+
+if($registro==true){
+
+
+   @$idpost = $idpost+1;
+    //echo "id: $id";
+    
+    
+   // $pasta ="post".$idpost;
+   $pasta ="post".$titulo;
+    //echo $pasta;
+    
+    if(file_exists($pasta)){
+    
+    echo "<script>alert('Essa pasta já existe!');window.history.go(-1);</script>";
+    
+    
+    }else{
+     mkdir("postagens/".$pasta,0777);
+     echo "<script>alert('A pasta ".$pasta." foi criada');</script>";
+     
+    
+    }
+    
+    $dt =date('Y-m-d');
+    $hr =date('H:i:s');
+    $page = 2;
+    
+
+
+
+
+$sql = "insert into tb_postagens(titulo, imagem, texto, autor, dt, hr, page, id_user, link) VALUES 
+('$titulo', '$foto', '$conteudo', '$autor', '$dt', '$hr', '$page', '$id', '$link');";
+
+
+mysqli_query($conn, $sql);
+
+
+move_uploaded_file($_FILES['Imagem']['tmp_name'],"postagens/".$pasta."/".$foto);
+//echo "$registro";
+header('location: index.php');
+}else{
+
+echo "<script>alert('Não foi possível cadastrar o conteúdo, verifique se os dados foram inseridos corretamente.');window.history.go(-1);</script>";
+
+}
+?>
+
